@@ -1,10 +1,12 @@
 import nltk;
 import math;
 import numpy;
+import sklearn;
 from collections import Counter;
+from sklearn import svm;
 
-tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+');
-stemmer = nltk.stem.SnowballStemmer('english');
+tokenizer = nltk.tokenize.NLTKWordTokenizer();
+stemmer = nltk.stem.RegexpStemmer('english');
 
 ###########################################
 # Functions for processing 
@@ -52,18 +54,20 @@ def calculateTFIDF(documents,categories, allTokens, doc_Tokens, nDocument, doc_T
                 idf = math.log10(nDocument/allTokens[token]);
                 tfidf.append(tf*idf);
             else:
+                # So that they have the same size
                 tfidf.append(0);
         doc_TFIDF[doc] = tfidf;
 
-# Calculate the centroid value for each category
-def calculateCentroid(categories, allTokens, doc_TFIDF, cat_TFIDF):
+# Calculate the weigth value of each token for each category
+def calculateWeight(categories, allTokens, doc_TFIDF, cat_TFIDF):
     for category in categories:
-        sum_vec = [0]*len(allTokens);
+        weights = [0]*len(allTokens);
         for document in categories[category]:
-            sum_vec = [a+b for a,b in zip(sum_vec, doc_TFIDF[document])];
+            for i in range(0,len(weights)):
+                # Summing all the weights for the same token
+                weights[i] = weights[i]+doc_TFIDF[document][i];
         
-        cat_TFIDF[category] = [a/len(categories[category]) for a in sum_vec];      
-
+        cat_TFIDF[category] = [weight/len(categories[category]) for weight in weights];      
 
 
 ###########################################
@@ -90,7 +94,7 @@ trian_Tokens = {}
 #  whether tokens appear in all documents {tokens : n}
 
 train_Doc_TFIDF = {}
-#{doc : tf*idf}
+#{doc : [tf*idf]}
 
 train_Cat_TFIDF = {}
 #{Category: tf*idf}
@@ -98,9 +102,10 @@ train_Cat_TFIDF = {}
 
 getTokens(train_Lines, train_docs, train_categories, train_Doc_Tokens, trian_Tokens);
 calculateTFIDF(train_docs,train_categories,trian_Tokens,train_Doc_Tokens,len(train_Lines),train_Doc_TFIDF);
-calculateCentroid(train_categories,trian_Tokens,train_Doc_TFIDF,train_Cat_TFIDF);
+calculateWeight(train_categories,trian_Tokens,train_Doc_TFIDF,train_Cat_TFIDF);
 
-
+classifier = svm.SVC(kernel='linear');
+classifier.fit(numpy.array(list( train_Cat_TFIDF.values())),numpy.array(list( train_Cat_TFIDF.keys())));
 print("Trainning Completed!");
 
 # Start predicting the type of documents
@@ -123,9 +128,14 @@ test_Pred = {}
 test_Doc = {};
 test_Cat = {}
 
-
+# Prepare the documents for comaprison
 getTokens(test_Lines,test_Doc,test_Cat,test_Doc_Tokens,test_Tokens);
 calculateTFIDF(test_Doc,test_Cat,trian_Tokens,test_Doc_Tokens,len(test_Doc),test_Doc_Tfidf);
+
+
+
+# for doc in test_Doc:
+#     test_Pred[doc] = classifier.predict(numpy.array(list(test_Doc_Tfidf[doc])).reshape(1,-1));
 
 for doc in test_Doc:
     doc_sim = []
@@ -134,8 +144,6 @@ for doc in test_Doc:
         temp2 = numpy.array(train_Cat_TFIDF[cat])
         doc_sim.append(numpy.dot(temp1, temp2)/(numpy.linalg.norm(temp1)*numpy.linalg.norm(temp2)))
     test_Pred[doc] = list(train_Cat_TFIDF)[doc_sim.index(max(doc_sim))]
-
-print(test_Pred);
 
 output_Name = input('Please enter the name of the output file:');
 out_File = open(output_Name, "w")
