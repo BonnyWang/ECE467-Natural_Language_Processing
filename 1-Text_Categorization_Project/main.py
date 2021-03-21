@@ -109,7 +109,7 @@ calculateWeight(train_categories,trian_Tokens,train_Doc_TFIDF,train_Cat_TFIDF);
 #classifier = svm.SVC(kernel='linear');
 #classifier.fit(numpy.array(list( train_Cat_TFIDF.values())),numpy.array(list( train_Cat_TFIDF.keys())));
 
-print("Trainning Completed!");
+print("Training Completed!");
 
 # Start predicting the type of documents
 name_Test = input("Please enter the name of the list testing documents:");
@@ -150,8 +150,7 @@ for doc in test_Doc:
     # Choose the categroy with the largest similarity value
     test_Pred[doc] = list(train_Cat_TFIDF)[doc_Similarity.index(max(doc_Similarity))]
 
-
-print('Fininshed predicting the category for documents!');
+print('Finished predicting the category for documents!');
 
 
 output_Name = input('Please enter the name of the output file:');
