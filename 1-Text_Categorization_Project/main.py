@@ -1,5 +1,4 @@
 import nltk;
-from nltk.tokenize import RegexpTokenizer;
 
 # Get user inputs
 name_Labeled = input("Please enter the name of the list of labeled training documents:");
@@ -20,7 +19,8 @@ train_datas = {};
 train_categories = {}; 
 #{catorgory: [document1, documeng2, ...]}
 
-tokenizer = RegexpTokenizer(r'\w+');
+tokenizer = nltk.Tokenizer;
+stemmer = nltk.stemmer;
 
 n_TrainDoc = 0;
 
