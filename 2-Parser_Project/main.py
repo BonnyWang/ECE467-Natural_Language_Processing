@@ -128,10 +128,10 @@ def getSentence():
                 print("VALID SENTENCE\n");
                 for i in range(0, nValid):
                     print("Valid parse #" + str(i+1) + ":");
-                    print(printBracketed(validNodeHead[i]) + "\n");
+                    print(printBracketed(validNodeHead[i]));
                     if textualDisplay:
-                        print(printTextualTree(validNodeHead[i]));
-                print("Number of valid parses: " + str(nValid));
+                        print("\n"+ printTextualTree(validNodeHead[i]));
+                print("\nNumber of valid parses: " + str(nValid));
 
 
 def main():

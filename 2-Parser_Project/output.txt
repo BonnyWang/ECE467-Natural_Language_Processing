@@ -1,0 +1,18 @@
+VALID SENTENCE
+
+Valid parse #1:
+[S [_Dummy3 [Aux does] [NP [Det the] [Nominal flight]]] [VP fly]]
+
+[S
+   [_Dummy3
+      [Aux does]
+      [NP
+         [Det the]
+         [Nominal flight]
+      ]
+   ]
+   [VP fly]
+]
+
+
+Number of valid parses: 1
