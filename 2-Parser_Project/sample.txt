@@ -1,0 +1,6 @@
+Valid parse #1:
+[S [NP i] [VP [Verb book] [NP [Det the] [Nominal [Nominal flight] [PP [Preposition through] [NP houston]]]]]]
+Valid parse #2:
+[S [NP i] [VP [VP [Verb book] [NP [Det the] [Nominal flight]]] [PP [Preposition through] [NP houston]]]]
+Valid parse #3:
+[S [NP i] [VP [_Dummy2 [Verb book] [NP [Det the] [Nominal flight]]] [PP [Preposition through] [NP houston]]]]
